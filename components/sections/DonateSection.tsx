@@ -68,7 +68,7 @@ export default function DonateSection() {
             <button className="mt-4 text-sm underline" style={{ color: 'var(--accent-light)' }} onClick={() => setSuccess(false)}>다른 문장 기부하기</button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <p className="text-xs font-medium mb-3" style={{ color: '#8a6a3a' }}>방법 1. 책 사진으로 기부하기</p>
               <button type="button" onClick={() => fileRef.current?.click()}

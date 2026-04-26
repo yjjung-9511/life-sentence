@@ -34,7 +34,7 @@ export default function TodaySection() {
         {sentences.length === 0 ? (
           <p className="text-center py-12 text-sm" style={{ color: 'var(--text-sub)' }}>오늘 아직 기부된 문장이 없습니다. 첫 번째 기부자가 되어보세요.</p>
         ) : (
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {sentences.map((s) => (
               <div key={s.id} className="rounded-lg p-5 relative overflow-hidden" style={{ background: '#f5ead4', border: '1px solid #e4d0a8' }}>
                 <span className="text-[10px] tracking-widest mb-2 block" style={{ color: '#c8863a' }}>✦ 오늘 입고</span>

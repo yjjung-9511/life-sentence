@@ -52,7 +52,7 @@ function ResultContent() {
         <button onClick={() => router.push('/')} className="text-sm" style={{ color: 'var(--text-sub)' }}>← 처음으로</button>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-8 py-16 grid md:grid-cols-2 gap-16 items-center">
+      <div className="max-w-4xl mx-auto px-8 py-16 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div>
           <p className="font-hahmlet font-light text-sm mb-5 leading-loose" style={{ color: 'var(--text-sub)' }}>
             {name}님,<br />오늘 당신에게 건네는 문장입니다.
