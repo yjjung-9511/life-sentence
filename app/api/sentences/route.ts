@@ -4,7 +4,6 @@ import { getServiceClient } from '@/lib/supabase'
 export async function GET() {
   const db = getServiceClient()
 
-  // KST 오늘 자정 계산
   const kstOffset = 9 * 60 * 60 * 1000
   const now = new Date()
   const kstNow = new Date(now.getTime() + kstOffset)
@@ -18,7 +17,27 @@ export async function GET() {
     .select('id, text, author, book_title, created_at')
     .gte('created_at', since)
     .order('created_at', { ascending: false })
-    .limit(9)
 
-  return NextResponse.json(data ?? [])
+  if (!data || data.length === 0) return NextResponse.json([])
+
+  // 작가별로 그룹핑 후 라운드로빈으로 섞어 다양한 작가가 보이게 함
+  const groups = new Map<string, typeof data>()
+  for (const s of data) {
+    const key = s.author
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key)!.push(s)
+  }
+
+  const result: typeof data = []
+  const lists = Array.from(groups.values())
+  let i = 0
+  while (result.length < 9 && lists.some((l) => i < l.length)) {
+    for (const list of lists) {
+      if (i < list.length) result.push(list[i])
+      if (result.length >= 9) break
+    }
+    i++
+  }
+
+  return NextResponse.json(result)
 }

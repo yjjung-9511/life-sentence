@@ -1,0 +1,7 @@
+{
+  "tool_name": "PowerShell",
+  "tool_input_preview": "{\"command\":\"cd \\\"C:\\\\Users\\\\day1\\\\Desktop\\\\for-fun\\\\life-sentence\\\"; gh repo create life-sentence --public --source=. --remote=origin --push\",\"description\":\"Create GitHub repo and push via PowerShell\"...",
+  "error": "Exit code 1\ngh : The term 'gh' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path i\r\ns correct and try again.\r\nAt line:1 char:51\r\n+ cd \"C:\\Users\\day1\\Desktop\\for-fun\\life-sentence\"; gh repo create life ...\r\n+                                                   ~~\r\n    + CategoryInfo          : ObjectNotFound: (gh:String) [], CommandNotFoundException\r\n    + FullyQualifiedErrorId : Com...",
+  "timestamp": "2026-04-26T15:51:34.737Z",
+  "retry_count": 1
+}

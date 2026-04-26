@@ -41,8 +41,7 @@ export default function DrawSection({ badge }: Props) {
           오늘 당신에게 어울리는<br />문장을 받아보세요
         </h2>
         <p className="text-sm font-light leading-loose mb-8" style={{ color: 'var(--text-sub)' }}>
-          이름과 요즘의 고민을 남겨주세요. 수백 개의 기부된 문장 중<br />
-          지금 당신에게 가장 필요한 문장 하나를 건네드립니다.
+          이름과 요즘의 고민을 남겨주세요. 수백 개의 기부된 문장 중 지금 당신에게 가장 필요한 문장 하나를 건네드립니다.
           {badge && <span className="ml-2 bg-[#c8863a] text-white text-[10px] px-2 py-0.5 rounded-full">{badge}</span>}
         </p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">

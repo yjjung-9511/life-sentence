@@ -15,15 +15,14 @@ export default function CTASection() {
             오늘 당신에게 어울리는 문장을 직접 받아보세요.
           </h2>
           <p className="text-sm font-light leading-loose mb-10" style={{ color: '#9a8060' }}>
-            AI가 지금 당신의 고민을 읽고, 가장 필요한 문장을 골라드립니다.<br />
-            혹은 이 공간을 오늘 힘든 누군가에게 먼저 건네보세요.
+            가장 필요한 문장을 골라드립니다. 혹은 이 공간을 오늘 힘든 누군가에게 먼저 건네보세요.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-xl p-6" style={{ background: '#2a2010', border: '1px solid #5a4828' }}>
               <p className="text-[10px] tracking-widest mb-2" style={{ color: '#8a7040' }}>오늘의 문장</p>
               <h3 className="font-hahmlet text-lg font-light mb-2" style={{ color: '#e8d4a8' }}>내 문장 받으러 가기</h3>
               <p className="text-xs font-light leading-loose mb-5" style={{ color: '#7a6a4a' }}>
-                이름과 고민을 남기면 AI가 지금 당신에게 가장 어울리는 문장을 건네드립니다.
+                이름과 고민을 남기면 당신에게 가장 어울리는 문장을 건네드립니다.
               </p>
               <a href="#draw" className="font-hahmlet flex items-center justify-center h-11 rounded text-sm tracking-wider"
                 style={{ background: '#c8863a', color: '#fff8ec' }}>

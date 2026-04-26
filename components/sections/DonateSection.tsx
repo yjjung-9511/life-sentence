@@ -74,7 +74,7 @@ export default function DonateSection() {
               <button type="button" onClick={() => fileRef.current?.click()}
                 className="w-full h-32 rounded flex flex-col items-center justify-center gap-2 text-sm cursor-pointer"
                 style={{ background: '#f0e6d0', border: '2px dashed #c8a870', color: '#9a7a48' }}>
-                {ocrLoading ? '인식 중...' : <><span>📷 책 사진을 올려주세요</span><span className="text-xs" style={{ color: '#b8a080' }}>AI가 문장을 자동으로 인식합니다</span></>}
+                {ocrLoading ? '인식 중...' : <><span>📷 책 사진을 올려주세요</span><span className="text-xs" style={{ color: '#b8a080' }}>문장을 자동으로 인식합니다</span></>}
               </button>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleOcr} />
             </div>
