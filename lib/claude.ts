@@ -1,0 +1,56 @@
+import Anthropic from '@anthropic-ai/sdk'
+import { Sentence } from '@/types'
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+// 문장 매칭: 사용자 고민 → 가장 어울리는 문장 ID 반환
+export async function matchSentence(
+  sentences: Pick<Sentence, 'id' | 'text' | 'author' | 'book_title'>[],
+  name: string,
+  concern: string
+): Promise<string> {
+  const list = sentences
+    .map((s, i) => `[${i}] ID:${s.id}\n문장: ${s.text}\n작가: ${s.author}`)
+    .join('\n\n')
+
+  const response = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 100,
+    system: '당신은 공감 능력이 뛰어난 문장 큐레이터입니다. 사용자의 상황에 가장 위로가 될 문장을 고릅니다. 반드시 JSON 형식으로만 응답하세요: {"id": "선택한_문장의_UUID"}',
+    messages: [
+      {
+        role: 'user',
+        content: `이름: ${name}\n고민: ${concern}\n\n아래 문장 목록에서 이 사람에게 가장 어울리는 문장 하나를 골라주세요:\n\n${list}`,
+      },
+    ],
+  })
+
+  const raw = (response.content[0] as { type: string; text: string }).text
+  const parsed = JSON.parse(raw)
+  return parsed.id as string
+}
+
+// OCR: 책 사진 → 문장 텍스트 추출
+export async function extractTextFromImage(base64Image: string): Promise<string> {
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 500,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: 'image/jpeg', data: base64Image },
+          },
+          {
+            type: 'text',
+            text: '이 책 이미지에서 밑줄 긋거나 표시된 문장, 또는 가장 눈에 띄는 구절을 텍스트로 추출해주세요. 따옴표 없이 문장만 반환하세요.',
+          },
+        ],
+      },
+    ],
+  })
+
+  return (response.content[0] as { type: string; text: string }).text.trim()
+}
