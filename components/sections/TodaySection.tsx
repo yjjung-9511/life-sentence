@@ -20,7 +20,7 @@ export default function TodaySection() {
 
   return (
     <section className="px-8 py-20 border-b" style={{ borderColor: 'var(--border)' }}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-8 pb-4 border-b-2" style={{ borderColor: '#3a2e1e' }}>
           <div>
             <p className="text-xs tracking-widest mb-2" style={{ color: 'var(--accent-light)' }}>오늘의 입고 문장</p>
@@ -38,11 +38,13 @@ export default function TodaySection() {
             {sentences.map((s) => (
               <div key={s.id} className="rounded-lg p-5 relative overflow-hidden" style={{ background: '#f5ead4', border: '1px solid #e4d0a8' }}>
                 <span className="text-[10px] tracking-widest mb-2 block" style={{ color: '#c8863a' }}>✦ 오늘 입고</span>
-                <p className="font-hahmlet text-sm font-light leading-relaxed line-clamp-3" style={{ color: '#4a3820' }}>
-                  &ldquo;{s.text}&rdquo;
-                </p>
-                <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent, #f5ead4)' }} />
+                <div className="relative h-14 overflow-hidden">
+                  <p className="font-hahmlet text-sm font-light leading-relaxed" style={{ color: '#4a3820' }}>
+                    &ldquo;{s.text}&rdquo;
+                  </p>
+                  <div className="absolute inset-0 pointer-events-none"
+                    style={{ background: 'linear-gradient(to bottom, transparent 20%, #f5ead4 100%)' }} />
+                </div>
                 <p className="text-xs italic mt-3 relative" style={{ color: '#9a7a50' }}>
                   {s.book_title ? `${s.book_title} · ` : ''}{s.author}
                 </p>

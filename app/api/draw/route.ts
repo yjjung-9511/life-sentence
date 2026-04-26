@@ -58,14 +58,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '아직 문장이 없습니다.' }, { status: 503 })
   }
 
-  // Claude로 매칭
-  const sentenceId = await matchSentence(sentences, body.name, body.concern)
-  const matched = sentences.find((s) => s.id === sentenceId)
+  // Claude로 매칭 (실패 시 랜덤 폴백)
+  let matched: (typeof sentences)[number] | undefined
+  try {
+    const sentenceId = await matchSentence(sentences, body.name, body.concern)
+    matched = sentences.find((s) => s.id === sentenceId)
+  } catch {
+    // Claude 응답 파싱 실패 시 랜덤 선택
+  }
 
   if (!matched) {
-    // Claude가 잘못된 ID 반환 시 랜덤 선택
-    const fallback = sentences[Math.floor(Math.random() * sentences.length)]
-    return handleMatch(db, ip, body, fallback, todayCount)
+    matched = sentences[Math.floor(Math.random() * sentences.length)]
   }
 
   return handleMatch(db, ip, body, matched, todayCount)

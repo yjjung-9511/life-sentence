@@ -9,7 +9,7 @@ export default function CTASection() {
   return (
     <>
       <section className="px-8 py-20" style={{ background: '#3a2e1e' }}>
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h2 className="font-hahmlet text-2xl font-light leading-relaxed mb-3" style={{ color: '#e8d4a8' }}>
             마음에 닿는 문장이 있었나요?<br />
             오늘 당신에게 어울리는 문장을 직접 받아보세요.

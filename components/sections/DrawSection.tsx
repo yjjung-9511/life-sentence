@@ -35,13 +35,13 @@ export default function DrawSection({ badge }: Props) {
 
   return (
     <section className="px-8 py-20 border-b" style={{ borderColor: 'var(--border)' }}>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <p className="text-xs tracking-widest mb-3" style={{ color: 'var(--accent-light)' }}>오늘의 인생 문장</p>
         <h2 className="font-hahmlet text-3xl font-light mb-3" style={{ color: 'var(--text)' }}>
           오늘 당신에게 어울리는<br />문장을 받아보세요
         </h2>
         <p className="text-sm font-light leading-loose mb-8" style={{ color: 'var(--text-sub)' }}>
-          이름과 요즘의 고민을 남겨주세요. AI가 읽고, 수백 개의 기부된 문장 중<br />
+          이름과 요즘의 고민을 남겨주세요. 수백 개의 기부된 문장 중<br />
           지금 당신에게 가장 필요한 문장 하나를 건네드립니다.
           {badge && <span className="ml-2 bg-[#c8863a] text-white text-[10px] px-2 py-0.5 rounded-full">{badge}</span>}
         </p>

@@ -26,7 +26,12 @@ export async function matchSentence(
   })
 
   const raw = (response.content[0] as { type: string; text: string }).text
-  const parsed = JSON.parse(raw)
+  // Claude가 JSON 대신 텍스트로 응답해도 UUID를 직접 추출
+  const uuidMatch = raw.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)
+  if (uuidMatch) return uuidMatch[0]
+  // fallback: JSON 파싱
+  const cleaned = raw.replace(/```(?:json)?\s*/g, '').replace(/```\s*$/g, '').trim()
+  const parsed = JSON.parse(cleaned)
   return parsed.id as string
 }
 
@@ -34,7 +39,7 @@ export async function matchSentence(
 export async function extractTextFromImage(base64Image: string): Promise<string> {
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 500,
+    max_tokens: 1000,
     messages: [
       {
         role: 'user',
@@ -45,7 +50,7 @@ export async function extractTextFromImage(base64Image: string): Promise<string>
           },
           {
             type: 'text',
-            text: '이 책 이미지에서 밑줄 긋거나 표시된 문장, 또는 가장 눈에 띄는 구절을 텍스트로 추출해주세요. 따옴표 없이 문장만 반환하세요.',
+            text: '이 책 이미지에서 밑줄이 그어지거나 표시된 문장을 모두 찾아 전문을 정확하게 추출해주세요. 표시된 부분이 없다면 가장 눈에 띄는 구절 전체를 추출해주세요. 원문 그대로 반환하고 따옴표는 제외하세요.',
           },
         ],
       },

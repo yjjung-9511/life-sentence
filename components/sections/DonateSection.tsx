@@ -52,7 +52,7 @@ export default function DonateSection() {
 
   return (
     <section id="donate" className="px-8 py-20 border-b" style={{ background: '#fdf3e4', borderColor: 'var(--border)' }}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <p className="text-xs tracking-widest mb-3" style={{ color: 'var(--accent-light)' }}>문장 기부</p>
         <h2 className="font-hahmlet text-3xl font-light mb-3" style={{ color: 'var(--text)' }}>
           당신의 문장을<br />누군가에게 건네주세요

@@ -25,7 +25,7 @@ export default function SentenceCard({ text, author, bookTitle, theme }: Props) 
       style={{ background: t.bg, borderRadius: '4px', border: theme !== 'navy' ? `1px solid ${t.meta}33` : 'none' }}
     >
       <p
-        className={`flex-1 text-base leading-loose word-break-keep-all ${FONT_CLASS[theme]}`}
+        className={`flex-1 text-lg leading-loose word-break-keep-all ${FONT_CLASS[theme]}`}
         style={{ color: t.text, fontWeight: 300, ...fontStyle }}
       >
         &ldquo;{text}&rdquo;

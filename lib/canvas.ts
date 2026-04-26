@@ -36,9 +36,13 @@ async function loadFont(fontFamily: string): Promise<void> {
   const url = fontMap[fontFamily]
   if (!url) return
 
-  const face = new FontFace(fontFamily, `url(${url})`, { weight: '300' })
-  await face.load()
-  document.fonts.add(face)
+  try {
+    const face = new FontFace(fontFamily, `url(${url})`, { weight: '300' })
+    await face.load()
+    document.fonts.add(face)
+  } catch {
+    // 폰트 로드 실패 시 시스템 기본 폰트로 폴백
+  }
 }
 
 export async function generateCardImage(
@@ -51,7 +55,7 @@ export async function generateCardImage(
   await loadFont(t.font)
 
   const SIZE = 1080
-  const PAD = 72
+  const PAD = 80
   const canvas = document.createElement('canvas')
   canvas.width = SIZE
   canvas.height = SIZE
@@ -63,8 +67,8 @@ export async function generateCardImage(
 
   // 따옴표 포함 텍스트
   const fullText = `"${text}"`
-  const fontSize = 48
-  const lineHeight = fontSize * 1.9
+  const fontSize = 46
+  const lineHeight = fontSize * 1.85
   ctx.fillStyle = t.text
   ctx.font = `300 ${fontSize}px "${t.font}"`
 
@@ -74,24 +78,29 @@ export async function generateCardImage(
   })
 
   // 메타 (좌측 하단)
-  const metaY = SIZE - 100
+  const metaY = SIZE - 110
   ctx.fillStyle = t.meta
-  ctx.font = `300 30px "${t.font}"`
+  ctx.font = `300 28px "${t.font}"`
   ctx.fillText(buildMetaText(author, bookTitle), PAD, metaY)
 
   // 브랜드
   ctx.fillStyle = t.brand
-  ctx.font = `300 20px "${t.font}"`
+  ctx.font = `300 22px "${t.font}"`
   ctx.fillText('Life, Sentence', PAD, metaY + 42)
 
-  // PNG 다운로드
-  canvas.toBlob((blob) => {
-    if (!blob) return
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'life-sentence.png'
-    a.click()
-    URL.revokeObjectURL(url)
-  }, 'image/png')
+  // PNG 다운로드 (Promise로 래핑해야 await가 정상 동작)
+  await new Promise<void>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) { reject(new Error('이미지 생성 실패')); return }
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'life-sentence.png'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      resolve()
+    }, 'image/png')
+  })
 }
