@@ -6,7 +6,7 @@ import { DrawRequest, DrawResponse } from '@/types'
 
 const MAX_DRAWS_PER_DAY = 3
 
-export function getKstMidnight(): Date {
+function getKstMidnight(): Date {
   // KST = UTC+9, 오늘 KST 00:00을 UTC로 계산
   const now = new Date()
   const kstOffset = 9 * 60 * 60 * 1000
@@ -17,7 +17,7 @@ export function getKstMidnight(): Date {
   return new Date(kstMidnight.getTime() - kstOffset)
 }
 
-export async function countTodayDrawsByIp(ip: string): Promise<number> {
+async function countTodayDrawsByIp(ip: string): Promise<number> {
   const db = getServiceClient()
   const since = getKstMidnight().toISOString()
   const { count } = await db
