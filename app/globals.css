@@ -1,27 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;500&family=Noto+Sans+KR:wght@300;400&family=Noto+Serif+KR:wght@300;400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg: #fdf8f0;
+  --accent: #8a5c2a;
+  --accent-light: #c8863a;
+  --text: #2c2015;
+  --text-sub: #9a8060;
+  --border: #e4d9c2;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.font-hahmlet { font-family: 'Hahmlet', serif; }
+
+.word-break-keep-all {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
