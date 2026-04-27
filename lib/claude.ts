@@ -16,11 +16,17 @@ export async function matchSentence(
   const response = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 100,
-    system: '당신은 공감 능력이 뛰어난 문장 큐레이터입니다. 사용자의 상황에 가장 위로가 될 문장을 고릅니다. 반드시 JSON 형식으로만 응답하세요: {"id": "선택한_문장의_UUID"}',
+    system: `당신은 깊은 공감 능력을 가진 문장 큐레이터입니다.
+사용자의 고민을 읽고 아래 기준으로 가장 적합한 문장 하나를 선택하세요:
+1. 지금 감정 상태와 진짜로 공명하는가 (억지 위로가 아닌 정직한 공감)
+2. 읽은 후 마음이 조금 가벼워지거나, 다시 걸어갈 힘이 생기는가
+3. 이 사람의 구체적인 상황에 와닿는 문장인가
+
+반드시 JSON 형식으로만 응답하세요: {"id": "선택한_문장의_UUID"}`,
     messages: [
       {
         role: 'user',
-        content: `이름: ${name}\n고민: ${concern}\n\n아래 문장 목록에서 이 사람에게 가장 어울리는 문장 하나를 골라주세요:\n\n${list}`,
+        content: `이름: ${name}\n고민: ${concern}\n\n아래 문장 중 지금 이 사람에게 가장 필요한 문장 하나를 골라주세요:\n\n${list}`,
       },
     ],
   })

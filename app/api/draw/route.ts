@@ -46,29 +46,35 @@ export async function POST(req: NextRequest) {
 
   const db = getServiceClient()
 
-  // 승인된 문장 최신 50개 가져오기
-  const { data: sentences } = await db
-    .from('sentences')
-    .select('id, text, author, book_title')
-    .eq('is_approved', true)
-    .order('created_at', { ascending: false })
-    .limit(50)
+  // 승인된 전체 문장 + 오늘 이미 뽑은 문장 ID 병렬 조회
+  const since = getKstMidnight().toISOString()
+  const [{ data: allSentences }, { data: todayDraws }] = await Promise.all([
+    db.from('sentences').select('id, text, author, book_title').eq('is_approved', true),
+    db.from('draws').select('sentence_id').eq('ip_address', ip).gte('drawn_at', since),
+  ])
 
-  if (!sentences || sentences.length === 0) {
+  if (!allSentences || allSentences.length === 0) {
     return NextResponse.json({ error: '아직 문장이 없습니다.' }, { status: 503 })
   }
 
+  // 오늘 이미 받은 문장 제외 후 전체 풀에서 랜덤 20개 샘플
+  const drawnIds = new Set(todayDraws?.map((d) => d.sentence_id) ?? [])
+  const available = allSentences.filter((s) => !drawnIds.has(s.id))
+  const pool = (available.length > 0 ? available : allSentences)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 20)
+
   // Claude로 매칭 (실패 시 랜덤 폴백)
-  let matched: (typeof sentences)[number] | undefined
+  let matched: (typeof allSentences)[number] | undefined
   try {
-    const sentenceId = await matchSentence(sentences, body.name, body.concern)
-    matched = sentences.find((s) => s.id === sentenceId)
+    const sentenceId = await matchSentence(pool, body.name, body.concern)
+    matched = pool.find((s) => s.id === sentenceId)
   } catch {
     // Claude 응답 파싱 실패 시 랜덤 선택
   }
 
   if (!matched) {
-    matched = sentences[Math.floor(Math.random() * sentences.length)]
+    matched = pool[Math.floor(Math.random() * pool.length)]
   }
 
   return handleMatch(db, ip, body, matched, todayCount)
