@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get('image') as File | null
 
     if (!file) return NextResponse.json({ error: '이미지를 업로드해주세요.' }, { status: 400 })
-    if (file.size > 5 * 1024 * 1024) return NextResponse.json({ error: '이미지는 5MB 이하여야 합니다.' }, { status: 400 })
+    if (file.size > 4 * 1024 * 1024) return NextResponse.json({ error: '이미지가 너무 큽니다. 4MB 이하 파일을 올려주세요.' }, { status: 400 })
 
     const mediaType: AllowedType = ALLOWED_TYPES.includes(file.type as AllowedType)
       ? (file.type as AllowedType)

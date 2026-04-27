@@ -11,21 +11,37 @@ export default function DonateSection() {
   const [ocrLoading, setOcrLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [ocrError, setOcrError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleOcr(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+
+    setOcrError('')
+    if (file.size > 4 * 1024 * 1024) {
+      setOcrError('이미지가 너무 큽니다. 4MB 이하 파일을 올려주세요.')
+      if (fileRef.current) fileRef.current.value = ''
+      return
+    }
+
     setOcrLoading(true)
     try {
       const formData = new FormData()
       formData.append('image', file)
       const res = await fetch('/api/ocr', { method: 'POST', body: formData })
-      const data = await res.json()
-      if (res.ok) setText(data.text)
-      else setError(data.error)
+      const data = await res.json().catch(() => ({ error: '서버 응답 오류' }))
+      if (res.ok) {
+        if (data.text) setText(data.text)
+        else setOcrError('텍스트를 인식하지 못했습니다. 더 선명한 사진으로 시도해주세요.')
+      } else {
+        setOcrError(data.error || '인식 중 오류가 발생했습니다.')
+      }
+    } catch {
+      setOcrError('네트워크 오류가 발생했습니다. 다시 시도해주세요.')
     } finally {
       setOcrLoading(false)
+      if (fileRef.current) fileRef.current.value = ''
     }
   }
 
@@ -77,6 +93,7 @@ export default function DonateSection() {
                 {ocrLoading ? '인식 중...' : <><span>📷 책 사진을 올려주세요</span><span className="text-xs" style={{ color: '#b8a080' }}>문장을 자동으로 인식합니다</span></>}
               </button>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleOcr} />
+              {ocrError && <p className="text-xs text-red-500 mt-2">{ocrError}</p>}
             </div>
             <div>
               <p className="text-xs font-medium mb-3" style={{ color: '#8a6a3a' }}>방법 2. 직접 입력하기</p>
