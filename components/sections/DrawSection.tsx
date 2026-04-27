@@ -1,9 +1,40 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface Props {
   badge?: string
+}
+
+function LoadingOverlay({ name }: { name: string }) {
+  const [dots, setDots] = useState('')
+  const [step, setStep] = useState(0)
+
+  const steps = [
+    `${name}님의 이야기를 읽고 있습니다`,
+    `${name}님의 오늘을 헤아리는 중입니다`,
+    `${name}님을 위한 문장을 서가에서 찾는 중입니다`,
+  ]
+
+  useEffect(() => {
+    const dotTimer = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'))
+    }, 400)
+    const stepTimer = setInterval(() => {
+      setStep((prev) => Math.min(prev + 1, steps.length - 1))
+    }, 1800)
+    return () => { clearInterval(dotTimer); clearInterval(stepTimer) }
+  }, [])
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center px-8" style={{ background: '#fdf3e4' }}>
+      <p className="text-xs tracking-widest mb-8" style={{ color: '#c8a060' }}>✦ ✦ ✦</p>
+      <p className="font-hahmlet text-2xl font-light text-center leading-relaxed mb-3" style={{ color: '#3a2e1e' }}>
+        {steps[step]}{dots}
+      </p>
+      <p className="text-sm font-light" style={{ color: '#b09068' }}>잠시만 기다려주세요</p>
+    </div>
+  )
 }
 
 export default function DrawSection({ badge }: Props) {
@@ -34,49 +65,52 @@ export default function DrawSection({ badge }: Props) {
   }
 
   return (
-    <section className="px-8 py-20 border-b" style={{ borderColor: 'var(--border)' }}>
-      <div className="max-w-5xl mx-auto">
-        <p className="text-xs tracking-widest mb-3" style={{ color: 'var(--accent-light)' }}>오늘의 인생 문장</p>
-        <h2 className="font-hahmlet text-3xl font-light mb-3" style={{ color: 'var(--text)' }}>
-          오늘 당신에게 어울리는<br />문장을 받아보세요
-        </h2>
-        <p className="text-sm font-light leading-loose mb-8" style={{ color: 'var(--text-sub)' }}>
-          이름과 요즘의 고민을 남겨주세요. 수백 개의 기부된 문장 중 지금 당신에게 가장 필요한 문장 하나를 건네드립니다.
-          {badge && <span className="ml-2 bg-[#c8863a] text-white text-[10px] px-2 py-0.5 rounded-full">{badge}</span>}
-        </p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="text"
-            placeholder="이름을 알려주세요"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="px-4 h-11 rounded text-sm outline-none"
-            style={{ background: '#f0e6d0', border: '1px solid #ddd0b0', color: 'var(--text)' }}
-          />
-          <textarea
-            placeholder="요즘 털어버리고 싶은 일, 자꾸 생각나는 후회, 꽉 막힌 것들을 자유롭게 써주세요. 잘 쓰지 않아도 됩니다."
-            value={concern}
-            onChange={(e) => setConcern(e.target.value)}
-            required
-            rows={4}
-            className="px-4 py-3 rounded text-sm outline-none resize-none leading-relaxed"
-            style={{ background: '#f0e6d0', border: '1px solid #ddd0b0', color: 'var(--text)' }}
-          />
-          <p className="text-xs leading-relaxed" style={{ color: '#b0906a' }}>
-            🔒 제출된 정보는 외부에 공개되지 않으며, 오직 문장 큐레이션 목적으로만 활용됩니다.
+    <>
+      {loading && <LoadingOverlay name={name} />}
+      <section className="px-8 py-20 border-b" style={{ borderColor: 'var(--border)' }}>
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs tracking-widest mb-3" style={{ color: 'var(--accent-light)' }}>오늘의 인생 문장</p>
+          <h2 className="font-hahmlet text-3xl font-light mb-3" style={{ color: 'var(--text)' }}>
+            오늘 당신에게 어울리는<br />문장을 받아보세요
+          </h2>
+          <p className="text-sm font-light leading-loose mb-8" style={{ color: 'var(--text-sub)' }}>
+            이름과 요즘의 고민을 남겨주세요. 수백 개의 기부된 문장 중 지금 당신에게 가장 필요한 문장 하나를 건네드립니다.
+            {badge && <span className="ml-2 bg-[#c8863a] text-white text-[10px] px-2 py-0.5 rounded-full">{badge}</span>}
           </p>
-          {error && <p className="text-xs text-red-500">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="font-hahmlet h-12 rounded text-sm tracking-wider transition-opacity disabled:opacity-50"
-            style={{ background: 'var(--accent)', color: '#fdf0da' }}
-          >
-            {loading ? '문장을 찾는 중...' : '✦ 오늘의 문장 받기'}
-          </button>
-        </form>
-      </div>
-    </section>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <input
+              type="text"
+              placeholder="이름을 알려주세요"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="px-4 h-11 rounded text-sm outline-none"
+              style={{ background: '#f0e6d0', border: '1px solid #ddd0b0', color: 'var(--text)' }}
+            />
+            <textarea
+              placeholder="요즘 털어버리고 싶은 일, 자꾸 생각나는 후회, 꽉 막힌 것들을 자유롭게 써주세요. 잘 쓰지 않아도 됩니다."
+              value={concern}
+              onChange={(e) => setConcern(e.target.value)}
+              required
+              rows={4}
+              className="px-4 py-3 rounded text-sm outline-none resize-none leading-relaxed"
+              style={{ background: '#f0e6d0', border: '1px solid #ddd0b0', color: 'var(--text)' }}
+            />
+            <p className="text-xs leading-relaxed" style={{ color: '#b0906a' }}>
+              🔒 제출된 정보는 외부에 공개되지 않으며, 오직 문장 큐레이션 목적으로만 활용됩니다.
+            </p>
+            {error && <p className="text-xs text-red-500">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="font-hahmlet h-12 rounded text-sm tracking-wider transition-opacity disabled:opacity-50"
+              style={{ background: 'var(--accent)', color: '#fdf0da' }}
+            >
+              ✦ 오늘의 문장 받기
+            </button>
+          </form>
+        </div>
+      </section>
+    </>
   )
 }
