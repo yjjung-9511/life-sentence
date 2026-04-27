@@ -18,7 +18,7 @@ export default function Icon() {
           borderRadius: 6,
         }}
       >
-        <span style={{ fontSize: 18, color: '#e8d4a8' }}>✦</span>
+        <span style={{ fontSize: 22, color: '#e8d4a8', fontFamily: 'Georgia, serif', lineHeight: 1, marginTop: -4 }}>&ldquo;</span>
       </div>
     ),
     { ...size }
