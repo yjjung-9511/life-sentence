@@ -11,9 +11,17 @@ interface TodaySentence {
 
 export default function TodaySection() {
   const [sentences, setSentences] = useState<TodaySentence[]>([])
+  const [todayCount, setTodayCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
-    fetch('/api/sentences').then((r) => r.json()).then(setSentences)
+    fetch('/api/sentences')
+      .then((r) => r.json())
+      .then((data) => {
+        setSentences(data.sentences ?? [])
+        setTodayCount(data.todayCount ?? 0)
+        setTotalCount(data.totalCount ?? 0)
+      })
   }, [])
 
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Seoul' })
@@ -26,9 +34,15 @@ export default function TodaySection() {
             <p className="text-xs tracking-widest mb-2" style={{ color: 'var(--accent-light)' }}>오늘의 입고 문장</p>
             <h2 className="font-hahmlet text-3xl font-light" style={{ color: 'var(--text)' }}>오늘 새로 들어온 문장들</h2>
           </div>
-          <div className="text-right mt-4 md:mt-0">
-            <p className="text-sm" style={{ color: 'var(--text-sub)' }}>{today} 입고</p>
-            <p className="text-sm" style={{ color: 'var(--accent-light)' }}>오늘 {sentences.length}개의 문장이 새로 기부되었습니다</p>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <div className="text-center px-4 py-2 rounded-lg" style={{ background: '#f0e6d0', border: '1px solid #ddd0b0' }}>
+              <p className="text-[10px] tracking-widest mb-0.5" style={{ color: '#9a7a48' }}>오늘 입고</p>
+              <p className="font-hahmlet text-2xl font-light" style={{ color: 'var(--accent)' }}>{todayCount}<span className="text-sm ml-0.5">건</span></p>
+            </div>
+            <div className="text-center px-4 py-2 rounded-lg" style={{ background: '#f0e6d0', border: '1px solid #ddd0b0' }}>
+              <p className="text-[10px] tracking-widest mb-0.5" style={{ color: '#9a7a48' }}>누적 보관</p>
+              <p className="font-hahmlet text-2xl font-light" style={{ color: 'var(--text)' }}>{totalCount}<span className="text-sm ml-0.5">개</span></p>
+            </div>
           </div>
         </div>
         {sentences.length === 0 ? (

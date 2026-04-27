@@ -12,13 +12,24 @@ export async function GET() {
   )
   const since = new Date(kstMidnight.getTime() - kstOffset).toISOString()
 
-  const { data } = await db
-    .from('sentences')
-    .select('id, text, author, book_title, created_at')
-    .gte('created_at', since)
-    .order('created_at', { ascending: false })
+  const [{ data }, { count: todayCount }, { count: totalCount }] = await Promise.all([
+    db.from('sentences')
+      .select('id, text, author, book_title, created_at')
+      .eq('is_approved', true)
+      .gte('created_at', since)
+      .order('created_at', { ascending: false }),
+    db.from('sentences')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_approved', true)
+      .gte('created_at', since),
+    db.from('sentences')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_approved', true),
+  ])
 
-  if (!data || data.length === 0) return NextResponse.json([])
+  if (!data || data.length === 0) {
+    return NextResponse.json({ sentences: [], todayCount: todayCount ?? 0, totalCount: totalCount ?? 0 })
+  }
 
   // 작가별로 그룹핑 후 라운드로빈으로 섞어 다양한 작가가 보이게 함
   const groups = new Map<string, typeof data>()
@@ -39,5 +50,5 @@ export async function GET() {
     i++
   }
 
-  return NextResponse.json(result)
+  return NextResponse.json({ sentences: result, todayCount: todayCount ?? 0, totalCount: totalCount ?? 0 })
 }
