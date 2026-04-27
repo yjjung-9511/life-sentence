@@ -6,6 +6,8 @@ interface Props {
   badge?: string
 }
 
+const LOADING_STEP_COUNT = 3
+
 function LoadingOverlay({ name }: { name: string }) {
   const [dots, setDots] = useState('')
   const [step, setStep] = useState(0)
@@ -21,7 +23,7 @@ function LoadingOverlay({ name }: { name: string }) {
       setDots((prev) => (prev.length >= 3 ? '' : prev + '.'))
     }, 400)
     const stepTimer = setInterval(() => {
-      setStep((prev) => Math.min(prev + 1, steps.length - 1))
+      setStep((prev) => Math.min(prev + 1, LOADING_STEP_COUNT - 1))
     }, 1800)
     return () => { clearInterval(dotTimer); clearInterval(stepTimer) }
   }, [])

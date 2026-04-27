@@ -5,7 +5,31 @@ export const alt = 'Life, Sentence'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default function Image() {
+async function loadHahmletFont(): Promise<ArrayBuffer | null> {
+  try {
+    const css = await fetch(
+      'https://fonts.googleapis.com/css2?family=Hahmlet:wght@300',
+      { headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' } }
+    ).then((r) => r.text())
+
+    // Google Fonts CSS의 마지막 @font-face가 Latin 서브셋
+    const matches = Array.from(css.matchAll(/src: url\((.+?)\) format/g))
+    const fontUrl = matches[matches.length - 1]?.[1]
+    if (!fontUrl) return null
+
+    return fetch(fontUrl).then((r) => r.arrayBuffer())
+  } catch {
+    return null
+  }
+}
+
+export default async function Image() {
+  const hahmletFont = await loadHahmletFont()
+
+  const fontOptions = hahmletFont
+    ? [{ name: 'Hahmlet', data: hahmletFont, weight: 300 as const, style: 'normal' as const }]
+    : undefined
+
   return new ImageResponse(
     (
       <div
@@ -21,8 +45,8 @@ export default function Image() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flex: 1 }}>
-          {/* 좌: 타이틀 */}
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.05 }}>
+          {/* 좌: 타이틀 — Hahmlet 적용 */}
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.05, fontFamily: 'Hahmlet, serif' }}>
             <span style={{ fontSize: 128, fontWeight: 300, color: '#3a2e1e' }}>Life,</span>
             <span style={{ fontSize: 128, fontWeight: 300, color: '#3a2e1e' }}>Sentence</span>
           </div>
@@ -56,6 +80,6 @@ export default function Image() {
         </div>
       </div>
     ),
-    { ...size }
+    { ...size, fonts: fontOptions }
   )
 }
