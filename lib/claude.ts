@@ -36,7 +36,10 @@ export async function matchSentence(
 }
 
 // OCR: 책 사진 → 문장 텍스트 추출
-export async function extractTextFromImage(base64Image: string): Promise<string> {
+export async function extractTextFromImage(
+  base64Image: string,
+  mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp' = 'image/jpeg'
+): Promise<string> {
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 1000,
@@ -46,11 +49,17 @@ export async function extractTextFromImage(base64Image: string): Promise<string>
         content: [
           {
             type: 'image',
-            source: { type: 'base64', media_type: 'image/jpeg', data: base64Image },
+            source: { type: 'base64', media_type: mediaType, data: base64Image },
           },
           {
             type: 'text',
-            text: '이 책 이미지에서 밑줄이 그어지거나 표시된 문장을 모두 찾아 전문을 정확하게 추출해주세요. 표시된 부분이 없다면 가장 눈에 띄는 구절 전체를 추출해주세요. 원문 그대로 반환하고 따옴표는 제외하세요.',
+            text: `이미지에서 책 텍스트를 추출하는 작업입니다. 이미지가 회전되어 있거나 기울어져 있어도 텍스트를 인식해주세요.
+
+규칙:
+1. 밑줄·형광펜·표시가 있는 문장이 있으면 그 문장만 추출
+2. 표시가 없으면 이미지에서 읽히는 문장 중 가장 완전한 문장 하나를 추출
+3. 추출한 텍스트만 반환 — 설명, 따옴표, 부가 문구 없이
+4. 텍스트를 인식할 수 없는 경우에만 빈 문자열 반환`,
           },
         ],
       },
