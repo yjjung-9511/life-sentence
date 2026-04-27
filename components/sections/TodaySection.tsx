@@ -24,8 +24,6 @@ export default function TodaySection() {
       })
   }, [])
 
-  const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Seoul' })
-
   return (
     <section className="px-8 py-20 border-b" style={{ borderColor: 'var(--border)' }}>
       <div className="max-w-5xl mx-auto">
