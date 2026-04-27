@@ -57,12 +57,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '아직 문장이 없습니다.' }, { status: 503 })
   }
 
-  // 오늘 이미 받은 문장 제외 후 전체 풀에서 랜덤 20개 샘플
+  // 오늘 이미 받은 문장 제외 후 전체 풀 사용
   const drawnIds = new Set(todayDraws?.map((d) => d.sentence_id) ?? [])
   const available = allSentences.filter((s) => !drawnIds.has(s.id))
-  const pool = (available.length > 0 ? available : allSentences)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 20)
+  const pool = available.length > 0 ? available : allSentences
 
   // Claude로 매칭 (실패 시 랜덤 폴백)
   let matched: (typeof allSentences)[number] | undefined
