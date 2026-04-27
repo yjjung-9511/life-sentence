@@ -14,21 +14,40 @@ export default function DonateSection() {
   const [ocrError, setOcrError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
+  function compressImage(file: File): Promise<File> {
+    return new Promise((resolve) => {
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        const MAX = 1500
+        let { width, height } = img
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round((height * MAX) / width); width = MAX }
+          else { width = Math.round((width * MAX) / height); height = MAX }
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+        URL.revokeObjectURL(url)
+        canvas.toBlob((blob) => {
+          resolve(new File([blob!], 'compressed.jpg', { type: 'image/jpeg' }))
+        }, 'image/jpeg', 0.85)
+      }
+      img.src = url
+    })
+  }
+
   async function handleOcr(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
 
     setOcrError('')
-    if (file.size > 4 * 1024 * 1024) {
-      setOcrError('이미지가 너무 큽니다. 4MB 이하 파일을 올려주세요.')
-      if (fileRef.current) fileRef.current.value = ''
-      return
-    }
-
     setOcrLoading(true)
     try {
+      const compressed = await compressImage(file)
       const formData = new FormData()
-      formData.append('image', file)
+      formData.append('image', compressed)
       const res = await fetch('/api/ocr', { method: 'POST', body: formData })
       const data = await res.json().catch(() => ({ error: '서버 응답 오류' }))
       if (res.ok) {
@@ -74,8 +93,7 @@ export default function DonateSection() {
           당신의 문장을<br />누군가에게 건네주세요
         </h2>
         <p className="text-sm font-light leading-loose mb-10" style={{ color: 'var(--text-sub)' }}>
-          어떤 시절, 당신을 또 하루 나아가게 만들었던 문장이 있나요.<br />
-          그 문장을 기부해주세요. 당신의 문장이 누군가의 오늘을 버티게 할지도 모릅니다.
+          어떤 시절, 당신을 또 하루 나아가게 만들었던 문장이 있나요. 그 문장을 기부해주세요. 당신의 문장이 누군가의 오늘을 버티게 할지도 모릅니다.
         </p>
         {success ? (
           <div className="py-8 text-center">
